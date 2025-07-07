@@ -2,6 +2,14 @@
 
 A **Streamlit-based playground** that lets you chat with large language models and seamlessly plug in external **Multi-Server Command Protocol (MCP)** tools.  Spin up multiple FastMCP servers (Weather & Currency) alongside a Streamlit client, all orchestrated with Docker Compose.  The client is **provider-agnostic** (OpenAI • Amazon Bedrock • Anthropic • Google Gemini) thanks to LangChain + LangGraph.
 
+## 📖 Learn More
+Want a deep dive into how it all works? Check out the detailed walkthrough in this Medium article:
+https://medium.com/@elkhan.alizada/your-own-ai-agent-playground-build-it-with-streamlit-langgraph-and-docker-4caeb6fe0ac4
+
+---
+## 🖥️🔌 Main Interface – Connected View
+![Interface](assets/main_connected.png)
+
 ---
 ## 🏗️ Architecture
 ![Architecture](assets/mcp_playground.png)
