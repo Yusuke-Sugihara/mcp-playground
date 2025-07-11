@@ -1,5 +1,5 @@
 import streamlit as st
-from config import MODEL_OPTIONS
+from config import MODEL_OPTIONS, API_KEYS, AWS_CREDENTIALS
 import traceback
 from services.mcp_service import connect_to_mcp_servers
 from services.chat_service import create_chat, delete_chat
@@ -76,12 +76,38 @@ def create_provider_select_widget():
     with st.sidebar.container():
         if selected_provider == "Bedrock":
             with st.expander("🔐 Bedrock Credentials", expanded=True):
-                params['region_name'] = st.text_input("AWS Region", value=params.get('region_name'),key="region_name")
-                params['aws_access_key'] = st.text_input("AWS Access Key", value=params.get('aws_access_key'), type="password", key="aws_access_key")
-                params['aws_secret_key'] = st.text_input("AWS Secret Key", value=params.get('aws_secret_key'), type="password", key="aws_secret_key")
+                # Auto-load from environment if available
+                env_region = AWS_CREDENTIALS.get('region_name')
+                env_access_key = AWS_CREDENTIALS.get('aws_access_key') 
+                env_secret_key = AWS_CREDENTIALS.get('aws_secret_key')
+                
+                if env_region and env_access_key and env_secret_key:
+                    st.success("✅ AWS credentials loaded from .env file")
+                    params['region_name'] = env_region
+                    params['aws_access_key'] = env_access_key
+                    params['aws_secret_key'] = env_secret_key
+                    # Show masked values for confirmation
+                    st.text(f"Region: {env_region}")
+                    st.text(f"Access Key: {env_access_key[:8]}...")
+                    st.text(f"Secret Key: {env_secret_key[:8]}...")
+                else:
+                    st.warning("⚠️ AWS credentials not found in .env file")
+                    params['region_name'] = st.text_input("AWS Region", value=params.get('region_name'),key="region_name")
+                    params['aws_access_key'] = st.text_input("AWS Access Key", value=params.get('aws_access_key'), type="password", key="aws_access_key")
+                    params['aws_secret_key'] = st.text_input("AWS Secret Key", value=params.get('aws_secret_key'), type="password", key="aws_secret_key")
         else:
             with st.expander("🔐 API Key", expanded=True):
-                params['api_key'] = st.text_input(f"{selected_provider} API Key", value=params.get('api_key'), type="password", key="api_key")
+                # Auto-load from environment if available
+                env_api_key = API_KEYS.get(selected_provider)
+                
+                if env_api_key:
+                    st.success(f"✅ {selected_provider} API key loaded from .env file")
+                    params['api_key'] = env_api_key
+                    # Show masked key for confirmation
+                    st.text(f"API Key: {env_api_key[:5]}...")
+                else:
+                    st.warning(f"⚠️ {selected_provider} API key not found in .env file")
+                    params['api_key'] = st.text_input(f"{selected_provider} API Key", value=params.get('api_key'), type="password", key="api_key")
     
 
 def create_advanced_configuration_widget():

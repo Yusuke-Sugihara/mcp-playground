@@ -23,6 +23,8 @@ services:
     build: ./client
     container_name: hostclient
     restart: always
+    env_file:
+      - .env
     volumes:
       - ./client/:/app
     ports:
